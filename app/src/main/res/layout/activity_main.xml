@@ -35,20 +35,24 @@
             style="@style/dimensions"
             android:entries="@array/pizzaSize"/>
 
-        <CheckBox
-            style="@style/dimensions"
+        <CheckedTextView
+            android:id="@+id/checkboxBacon"
+            style="@style/checkedTextView"
             android:text="Bacon"/>
 
-        <CheckBox
-            style="@style/dimensions"
+        <CheckedTextView
+            android:id="@+id/checkboxExtraCheese"
+            style="@style/checkedTextView"
             android:text="Extra Cheese"/>
 
-        <CheckBox
-            style="@style/dimensions"
+        <CheckedTextView
+            android:id="@+id/checkboxOnion"
+            style="@style/checkedTextView"
             android:text="Onion"/>
 
-        <CheckBox
-            style="@style/dimensions"
+        <CheckedTextView
+            android:id="@+id/checkboxMushroom"
+            style="@style/checkedTextView"
             android:text="Mushroom"/>
 
         <EditText
