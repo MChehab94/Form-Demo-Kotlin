@@ -13,6 +13,10 @@ import android.widget.Button
 import android.widget.CheckedTextView
 import android.widget.EditText
 import android.widget.Spinner
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
 
@@ -100,6 +104,53 @@ class MainActivity : AppCompatActivity() {
             checkboxExtraCheese.isChecked = savedInstanceState.getBoolean("checkboxExtraCheese")
             checkboxOnion.isChecked = savedInstanceState.getBoolean("checkboxOnion")
             checkboxMushroom.isChecked = savedInstanceState.getBoolean("checkboxMushroom")
+        }
+
+        setButtonOnClickListener()
+    }
+
+    private fun setButtonOnClickListener() {
+        buttonPost.setOnClickListener { e ->
+            try {
+                val jsonObject = JSONObject()
+                val jsonArrayToppings = JSONArray()
+
+                val jsonObjectForm = JSONObject()
+
+                jsonObject.put("custname", editTextName.text.toString())
+                jsonObject.put("custemail", editTextEmail.text.toString())
+                jsonObject.put("custtel", editTextPhone.text.toString())
+                jsonObject.put("size", spinnerPizzaSize.selectedItem)
+                jsonObject.put("delivery", editTextTime.text.toString())
+                jsonObject.put("comments", editTextDelivery.text.toString())
+
+                if (checkboxBacon.isChecked) {
+                    jsonArrayToppings.put("bacon")
+                }
+                if (checkboxExtraCheese.isChecked) {
+                    jsonArrayToppings.put("cheese")
+                }
+                if (checkboxOnion.isChecked) {
+                    jsonArrayToppings.put("onion")
+                }
+                if (checkboxMushroom.isChecked) {
+                    jsonArrayToppings.put("mushroom")
+                }
+
+                if (jsonArrayToppings.length() > 0) {
+                    jsonObject.put("toppings", jsonArrayToppings)
+                }
+
+                jsonObjectForm.put("form", jsonObject)
+
+                HttpAsyncTask(WeakReference(this), BroadcastConstants
+                        .JSON_POST, HTTP.POST, jsonObjectForm.toString())
+                        .execute("http://httpbin.org/post")
+                isJSONPosting = true
+
+            } catch (jsonException: JSONException) {
+                jsonException.printStackTrace()
+            }
         }
     }
 
