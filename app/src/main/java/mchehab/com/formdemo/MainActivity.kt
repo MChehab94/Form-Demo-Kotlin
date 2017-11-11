@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private val listCheckedTextView: MutableList<CheckedTextView> by lazy {
         mutableListOf(checkboxOnion, checkboxBacon, checkboxExtraCheese, checkboxMushroom)
-    }
+}
 
     private var isJSONPosting = false
 
@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiverPost)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
