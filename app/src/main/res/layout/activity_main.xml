@@ -31,7 +31,7 @@
             android:hint="E-mail address"/>
 
         <Spinner
-            android:id="@+id/spinnerToppings"
+            android:id="@+id/spinnerPizzaSize"
             style="@style/dimensions"
             android:entries="@array/pizzaSize"/>
 
@@ -67,7 +67,7 @@
             android:hint="Delivery instructions"/>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttonPost"
             style="@style/dimensions"
             android:text="Submit Order"/>
     </LinearLayout>
