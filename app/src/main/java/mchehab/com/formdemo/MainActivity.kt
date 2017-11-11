@@ -1,5 +1,7 @@
 package mchehab.com.formdemo
 
+import kotlinx.android.synthetic.main.activity_main.*
+
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,10 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.CheckedTextView
-import android.widget.EditText
-import android.widget.Spinner
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -20,49 +19,12 @@ import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
 
-    private val editTextName: EditText by lazy{
-        findViewById<EditText>(R.id.editTextName)
-    }
-    private val editTextEmail: EditText by lazy{
-        findViewById<EditText>(R.id.editTextEmail)
-    }
-    private val editTextPhone: EditText by lazy{
-        findViewById<EditText>(R.id.editTextPhone)
-    }
-
-    private val spinnerPizzaSize: Spinner by lazy{
-        findViewById<Spinner>(R.id.spinnerToppings)
-    }
-
-    private val checkboxBacon: CheckedTextView by lazy{
-        findViewById<CheckedTextView>(R.id.checkboxBacon)
-    }
-    private val checkboxExtraCheese: CheckedTextView by lazy{
-        findViewById<CheckedTextView>(R.id.checkboxExtraCheese)
-    }
-    private val checkboxOnion: CheckedTextView by lazy{
-        findViewById<CheckedTextView>(R.id.checkboxOnion)
-    }
-    private val checkboxMushroom: CheckedTextView by lazy{
-        findViewById<CheckedTextView>(R.id.checkboxMushroom)
-    }
-
-    private val editTextTime: EditText by lazy{
-        findViewById<EditText>(R.id.editTextTime)
-    }
-    private val editTextDelivery: EditText by lazy{
-        findViewById<EditText>(R.id.editTextDelivery)
-    }
-
-    private val buttonPost: Button by lazy{
-        findViewById<Button>(R.id.button)
-    }
-
-    val editText: EditText by lazy {
-        findViewById<EditText>(R.id.editTextDelivery)
+    private val listCheckedTextView: MutableList<CheckedTextView> by lazy {
+        mutableListOf(checkboxOnion, checkboxBacon, checkboxExtraCheese, checkboxMushroom)
     }
 
     private var isJSONPosting = false
+
     private val broadcastReceiverPost = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val bundle = intent.extras
@@ -81,7 +43,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiverPost, IntentFilter(BroadcastConstants.JSON_POST))
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiverPost, IntentFilter
+        (BroadcastConstants.JSON_POST))
     }
 
     override fun onPause() {
@@ -94,17 +57,10 @@ class MainActivity : AppCompatActivity() {
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        checkboxExtraCheese.setOnClickListener { e -> checkboxExtraCheese.toggle() }
-        checkboxBacon.setOnClickListener { e -> checkboxBacon.toggle() }
-        checkboxMushroom.setOnClickListener { e -> checkboxMushroom.toggle() }
-        checkboxOnion.setOnClickListener { e -> checkboxOnion.toggle() }
+        listCheckedTextView.forEach { it.setOnClickListener{ _ -> it.toggle() } }
 
-        if (savedInstanceState != null) {
-            checkboxBacon.isChecked = savedInstanceState.getBoolean("checkboxBacon")
-            checkboxExtraCheese.isChecked = savedInstanceState.getBoolean("checkboxExtraCheese")
-            checkboxOnion.isChecked = savedInstanceState.getBoolean("checkboxOnion")
-            checkboxMushroom.isChecked = savedInstanceState.getBoolean("checkboxMushroom")
-        }
+        if (savedInstanceState != null)
+            listCheckedTextView.forEach { it.isChecked =  savedInstanceState.getBoolean(it.text.toString())}
 
         setButtonOnClickListener()
     }
@@ -116,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 val jsonArrayToppings = JSONArray()
 
                 val jsonObjectForm = JSONObject()
-
                 jsonObject.put("custname", editTextName.text.toString())
                 jsonObject.put("custemail", editTextEmail.text.toString())
                 jsonObject.put("custtel", editTextPhone.text.toString())
@@ -124,22 +79,10 @@ class MainActivity : AppCompatActivity() {
                 jsonObject.put("delivery", editTextTime.text.toString())
                 jsonObject.put("comments", editTextDelivery.text.toString())
 
-                if (checkboxBacon.isChecked) {
-                    jsonArrayToppings.put("bacon")
-                }
-                if (checkboxExtraCheese.isChecked) {
-                    jsonArrayToppings.put("cheese")
-                }
-                if (checkboxOnion.isChecked) {
-                    jsonArrayToppings.put("onion")
-                }
-                if (checkboxMushroom.isChecked) {
-                    jsonArrayToppings.put("mushroom")
-                }
+                listCheckedTextView.forEach { if(it.isChecked) jsonArrayToppings.put(it.text.toString()) }
 
-                if (jsonArrayToppings.length() > 0) {
+                if (jsonArrayToppings.length() > 0)
                     jsonObject.put("toppings", jsonArrayToppings)
-                }
 
                 jsonObjectForm.put("form", jsonObject)
 
@@ -147,7 +90,6 @@ class MainActivity : AppCompatActivity() {
                         .JSON_POST, HTTP.POST, jsonObjectForm.toString())
                         .execute("http://httpbin.org/post")
                 isJSONPosting = true
-
             } catch (jsonException: JSONException) {
                 jsonException.printStackTrace()
             }
@@ -156,10 +98,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(bundle: Bundle?) {
         super.onSaveInstanceState(bundle)
-        bundle?.putBoolean("checkboxBacon", checkboxBacon.isChecked)
-        bundle?.putBoolean("checkboxExtraCheese", checkboxExtraCheese.isChecked)
-        bundle?.putBoolean("checkboxOnion", checkboxOnion.isChecked)
-        bundle?.putBoolean("checkboxMushroom", checkboxMushroom.isChecked)
+        listCheckedTextView.forEach { bundle?.putBoolean(it.text.toString(), it.isChecked) }
     }
-
 }
