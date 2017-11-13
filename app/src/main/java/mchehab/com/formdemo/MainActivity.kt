@@ -69,6 +69,9 @@ class MainActivity : AppCompatActivity() {
     private fun setButtonOnClickListener() {
         buttonPost.setOnClickListener { e ->
             try {
+                if(!isFormValid()){
+                    return@setOnClickListener;
+                }
                 val jsonObject = JSONObject()
                 val jsonArrayToppings = JSONArray()
 
@@ -95,6 +98,41 @@ class MainActivity : AppCompatActivity() {
                 jsonException.printStackTrace()
             }
         }
+    }
+
+    private fun isFormValid(): Boolean {
+        if (!isValidName(editTextName.text.toString())) {
+            editTextName.error = "Invalid name"
+            return false
+        }
+        if (!isValidPhone(editTextPhone.text.toString())) {
+            editTextPhone.error = "Invalid phone"
+            return false
+        }
+        if (!isValidEmail(editTextEmail.text.toString())) {
+            editTextEmail.error = "Invalid email address"
+            return false
+        }
+        if (editTextTime.text.toString().length == 0) {
+            editTextTime.error = "Invalid time"
+            return false
+        } else {
+            editTextTime.error = null
+        }
+        return true
+    }
+
+    private fun isValidPhone(phone: String): Boolean {
+        return android.util.Patterns.PHONE.matcher(phone).matches()
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun isValidName(name: String): Boolean {
+        val regex = "^[\\p{L} .'-]+$"
+        return name.matches(regex.toRegex())
     }
 
     override fun onSaveInstanceState(bundle: Bundle?) {
