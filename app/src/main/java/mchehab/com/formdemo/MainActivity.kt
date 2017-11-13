@@ -3,6 +3,7 @@ package mchehab.com.formdemo
 import kotlinx.android.synthetic.main.activity_main.*
 
 import android.app.AlertDialog
+import android.app.TimePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,12 +11,15 @@ import android.content.IntentFilter
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
+import android.text.InputType
+import android.view.View
 import android.view.WindowManager
 import android.widget.CheckedTextView
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.ref.WeakReference
+import java.util.function.Function
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,7 +67,18 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState != null)
             listCheckedTextView.forEach { it.isChecked =  savedInstanceState.getBoolean(it.text.toString())}
 
+        setupTimePickerDialog()
         setButtonOnClickListener()
+    }
+
+    private fun setupTimePickerDialog(){
+        editTextTime.inputType = InputType.TYPE_NULL
+        editTextTime.setOnClickListener(View.OnClickListener {
+            TimePickerDialog(this@MainActivity, TimePickerDialog.OnTimeSetListener
+            { view, hourOfDay, minute ->
+                editTextTime.setText("$hourOfDay:$minute")
+            }, 0, 0, true).show()
+        })
     }
 
     private fun setButtonOnClickListener() {
